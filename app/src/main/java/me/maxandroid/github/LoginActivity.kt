@@ -1,30 +1,28 @@
 package me.maxandroid.github
 
+import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
-import android.content.pm.PackageManager
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.app.LoaderManager.LoaderCallbacks
 import android.content.CursorLoader
 import android.content.Loader
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.TextView
-
-import java.util.ArrayList
-import android.Manifest.permission.READ_CONTACTS
-
 import kotlinx.android.synthetic.main.activity_login.*
+import java.util.*
 
 /**
  * A login screen that offers login via email/password.
@@ -38,6 +36,10 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        email.setText(Settings.email)
+        password.setText(Settings.password)
+
         // Set up the login form.
         populateAutoComplete()
         password.setOnEditorActionListener(TextView.OnEditorActionListener { _, id, _ ->
@@ -68,8 +70,8 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
             Snackbar.make(email, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                .setAction(android.R.string.ok,
-                    { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) })
+                    .setAction(android.R.string.ok,
+                            { requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS) })
         } else {
             requestPermissions(arrayOf(READ_CONTACTS), REQUEST_READ_CONTACTS)
         }
@@ -79,10 +81,8 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
      * Callback received when a permissions request has been completed.
      */
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete()
@@ -97,9 +97,13 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      * errors are presented and no actual login attempt is made.
      */
     private fun attemptLogin() {
+        Settings.email = email.text.toString()
+        Settings.password = password.text.toString()
+
         if (mAuthTask != null) {
             return
         }
+
 
         // Reset errors.
         email.error = null
@@ -166,23 +170,23 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
             login_form.visibility = if (show) View.GONE else View.VISIBLE
             login_form.animate()
-                .setDuration(shortAnimTime)
-                .alpha((if (show) 0 else 1).toFloat())
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        login_form.visibility = if (show) View.GONE else View.VISIBLE
-                    }
-                })
+                    .setDuration(shortAnimTime)
+                    .alpha((if (show) 0 else 1).toFloat())
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            login_form.visibility = if (show) View.GONE else View.VISIBLE
+                        }
+                    })
 
             login_progress.visibility = if (show) View.VISIBLE else View.GONE
             login_progress.animate()
-                .setDuration(shortAnimTime)
-                .alpha((if (show) 1 else 0).toFloat())
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        login_progress.visibility = if (show) View.VISIBLE else View.GONE
-                    }
-                })
+                    .setDuration(shortAnimTime)
+                    .alpha((if (show) 1 else 0).toFloat())
+                    .setListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationEnd(animation: Animator) {
+                            login_progress.visibility = if (show) View.VISIBLE else View.GONE
+                        }
+                    })
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
@@ -192,24 +196,18 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     }
 
     override fun onCreateLoader(i: Int, bundle: Bundle?): Loader<Cursor> {
-        return CursorLoader(
-            this,
-            // Retrieve data rows for the device user's 'profile' contact.
-            Uri.withAppendedPath(
-                ContactsContract.Profile.CONTENT_URI,
-                ContactsContract.Contacts.Data.CONTENT_DIRECTORY
-            ), ProfileQuery.PROJECTION,
+        return CursorLoader(this,
+                // Retrieve data rows for the device user's 'profile' contact.
+                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
-            // Select only email addresses.
-            ContactsContract.Contacts.Data.MIMETYPE + " = ?", arrayOf(
-                ContactsContract.CommonDataKinds.Email
-                    .CONTENT_ITEM_TYPE
-            ),
+                // Select only email addresses.
+                ContactsContract.Contacts.Data.MIMETYPE + " = ?", arrayOf(ContactsContract.CommonDataKinds.Email
+                .CONTENT_ITEM_TYPE),
 
-            // Show primary email addresses first. Note that there won't be
-            // a primary email address if the user hasn't specified one.
-            ContactsContract.Contacts.Data.IS_PRIMARY + " DESC"
-        )
+                // Show primary email addresses first. Note that there won't be
+                // a primary email address if the user hasn't specified one.
+                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC")
     }
 
     override fun onLoadFinished(cursorLoader: Loader<Cursor>, cursor: Cursor) {
@@ -229,19 +227,16 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
     private fun addEmailsToAutoComplete(emailAddressCollection: List<String>) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        val adapter = ArrayAdapter(
-            this@LoginActivity,
-            android.R.layout.simple_dropdown_item_1line, emailAddressCollection
-        )
+        val adapter = ArrayAdapter(this@LoginActivity,
+                android.R.layout.simple_dropdown_item_1line, emailAddressCollection)
 
         email.setAdapter(adapter)
     }
 
     object ProfileQuery {
         val PROJECTION = arrayOf(
-            ContactsContract.CommonDataKinds.Email.ADDRESS,
-            ContactsContract.CommonDataKinds.Email.IS_PRIMARY
-        )
+                ContactsContract.CommonDataKinds.Email.ADDRESS,
+                ContactsContract.CommonDataKinds.Email.IS_PRIMARY)
         val ADDRESS = 0
         val IS_PRIMARY = 1
     }
@@ -250,8 +245,7 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) :
-        AsyncTask<Void, Void, Boolean>() {
+    inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Void): Boolean? {
             // TODO: attempt authentication against a network service.
@@ -264,13 +258,13 @@ class LoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             }
 
             return DUMMY_CREDENTIALS
-                .map { it.split(":") }
-                .firstOrNull { it[0] == mEmail }
-                ?.let {
-                    // Account exists, return true if the password matches.
-                    it[1] == mPassword
-                }
-                ?: true
+                    .map { it.split(":") }
+                    .firstOrNull { it[0] == mEmail }
+                    ?.let {
+                        // Account exists, return true if the password matches.
+                        it[1] == mPassword
+                    }
+                    ?: true
         }
 
         override fun onPostExecute(success: Boolean?) {
