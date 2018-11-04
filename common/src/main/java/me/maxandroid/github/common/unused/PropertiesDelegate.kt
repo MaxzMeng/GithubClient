@@ -1,4 +1,4 @@
-package me.maxandroid.github.common
+package me.maxandroid.github.common.unused
 
 import java.io.File
 import java.io.FileInputStream

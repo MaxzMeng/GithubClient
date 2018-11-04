@@ -1,4 +1,4 @@
-package me.maxandroid.github.common
+package me.maxandroid.github.common.ext
 
 sealed class BooleanExt<out T>
 
