@@ -2,9 +2,11 @@ package me.maxandroid.github.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import com.bennyhuo.tieguanyin.annotations.ActivityBuilder
 import kotlinx.android.synthetic.main.activity_login.*
 import me.maxandroid.github.R
 import me.maxandroid.github.common.ext.otherwise
@@ -12,18 +14,17 @@ import me.maxandroid.github.common.ext.yes
 import me.maxandroid.github.mvp.impl.BaseActivity
 import me.maxandroid.github.presenter.LoginPresenter
 import me.maxandroid.github.utils.hideSoftInput
+import org.jetbrains.anko.sdk15.listeners.onClick
 import org.jetbrains.anko.toast
 
-/**
- * A login screen that offers login via email/password.
- */
+@ActivityBuilder(flags = [Intent.FLAG_ACTIVITY_NO_HISTORY])
 class LoginActivity : BaseActivity<LoginPresenter>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        signInButton.setOnClickListener {
+        signInButton.onClick {
             presenter.checkUserName(username.text.toString())
                 .yes {
                     presenter.checkPasswd(password.text.toString())
@@ -44,45 +45,43 @@ class LoginActivity : BaseActivity<LoginPresenter>() {
     private fun showProgress(show: Boolean) {
         val shortAnimTime = resources.getInteger(android.R.integer.config_shortAnimTime)
         loginForm.animate().setDuration(shortAnimTime.toLong()).alpha(
-            (if (show) 0 else 1).toFloat()
-        ).setListener(object : AnimatorListenerAdapter() {
+            (if (show) 0 else 1).toFloat()).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 loginForm.visibility = if (show) View.GONE else View.VISIBLE
             }
         })
 
         loginProgress.animate().setDuration(shortAnimTime.toLong()).alpha(
-            (if (show) 1 else 0).toFloat()
-        ).setListener(object : AnimatorListenerAdapter() {
+            (if (show) 1 else 0).toFloat()).setListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 loginProgress.visibility = if (show) View.VISIBLE else View.GONE
             }
         })
     }
 
-    private fun showTips(view: EditText, tips: String) {
+    private fun showTips(view: EditText, tips: String){
         view.requestFocus()
         view.error = tips
     }
 
-    fun onLoginStart() {
+    fun onLoginStart(){
         showProgress(true)
     }
 
-    fun onLoginError(e: Throwable) {
+    fun onLoginError(e: Throwable){
         e.printStackTrace()
         toast("登录失败")
         showProgress(false)
     }
 
-    fun onLoginSuccess() {
-        toast("登陆成功")
+    fun onLoginSuccess(){
+        toast("登录成功")
         showProgress(false)
+        startMainActivity()
     }
 
-    fun onDataInit(name: String, passwd: String) {
+    fun onDataInit(name: String, passwd: String){
         username.setText(name)
         password.setText(passwd)
     }
-
 }
