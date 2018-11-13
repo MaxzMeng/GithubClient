@@ -3,9 +3,6 @@ package me.maxandroid.github.network.entities
 import me.maxandroid.github.settings.Configs
 import me.maxandroid.github.common.anno.PoKo
 
-/**
- * Created by benny on 6/21/17.
- */
 @PoKo
 data class AuthorizationReq(var scopes: List<String> = Configs.Account.SCOPES,
                             var note: String = Configs.Account.note,

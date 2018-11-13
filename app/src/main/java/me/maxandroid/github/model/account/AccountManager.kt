@@ -1,11 +1,11 @@
 package me.maxandroid.github.model.account
 
+import me.maxandroid.github.network.services.UserService
 import com.google.gson.Gson
 import me.maxandroid.github.network.entities.AuthorizationReq
 import me.maxandroid.github.network.entities.AuthorizationRsp
 import me.maxandroid.github.network.entities.User
 import me.maxandroid.github.network.services.AuthService
-import me.maxandroid.github.network.services.UserService
 import me.maxandroid.github.utils.fromJson
 import me.maxandroid.github.utils.pref
 import retrofit2.HttpException

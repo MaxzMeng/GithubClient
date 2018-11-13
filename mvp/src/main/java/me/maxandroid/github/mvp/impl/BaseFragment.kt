@@ -4,13 +4,15 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import me.maxandroid.github.mvp.IMvpView
 import me.maxandroid.github.mvp.IPresenter
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import kotlin.coroutines.experimental.buildSequence
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
-abstract class BaseFragment<P : BasePresenter<BaseFragment<P>>> : Fragment(), IMvpView<P> {
+abstract class BaseFragment<out P: BasePresenter<BaseFragment<P>>>: IMvpView<P>,Fragment() {
     override val presenter: P
 
     init {
@@ -21,9 +23,9 @@ abstract class BaseFragment<P : BasePresenter<BaseFragment<P>>> : Fragment(), IM
     private fun createPresenterKt(): P {
         buildSequence {
             var thisClass: KClass<*> = this@BaseFragment::class
-            while (true) {
+            while (true){
                 yield(thisClass.supertypes)
-                thisClass = thisClass.supertypes.firstOrNull()?.jvmErasure ?: break
+                thisClass = thisClass.supertypes.firstOrNull()?.jvmErasure?: break
             }
         }.flatMap {
             it.flatMap { it.arguments }.asSequence()
@@ -31,6 +33,24 @@ abstract class BaseFragment<P : BasePresenter<BaseFragment<P>>> : Fragment(), IM
             it.type?.jvmErasure?.isSubclassOf(IPresenter::class) ?: false
         }.let {
             return it.type!!.jvmErasure.primaryConstructor!!.call() as P
+        }
+    }
+
+    private fun createPresenter(): P {
+        buildSequence<Type> {
+            var thisClass: Class<*> = this@BaseFragment.javaClass
+            while (true) {
+                yield(thisClass.genericSuperclass)
+                thisClass = thisClass.superclass ?: break
+            }
+        }.filter {
+            it is ParameterizedType
+        }.flatMap {
+            (it as ParameterizedType).actualTypeArguments.asSequence()
+        }.first {
+            it is Class<*> && IPresenter::class.java.isAssignableFrom(it)
+        }.let {
+            return (it as Class<P>).newInstance()
         }
     }
 

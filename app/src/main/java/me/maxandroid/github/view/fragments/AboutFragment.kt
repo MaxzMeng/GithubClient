@@ -1,48 +1,46 @@
 package me.maxandroid.github.view.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import me.maxandroid.github.R
 import me.maxandroid.github.utils.markdownText
+import me.maxandroid.github.view.common.CommonSinglePageFragment
 import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoContext.Companion
 import org.jetbrains.anko.sdk15.listeners.onClick
-import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.nestedScrollView
 
-/**
- * Created by benny on 7/9/17.
- */
-class AboutFragment : Fragment() {
+class AboutFragment : CommonSinglePageFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return AboutFragmentUI().createView(AnkoContext.create(context!!, this))
+        return AboutFragmentUI().createView(Companion.create(context!!, this))
     }
 }
 
-class AboutFragmentUI: AnkoComponent<AboutFragment> {
+class AboutFragmentUI : AnkoComponent<AboutFragment> {
     override fun createView(ui: AnkoContext<AboutFragment>) = ui.apply {
         nestedScrollView {
             verticalLayout {
+
                 imageView {
                     imageResource = R.mipmap.ic_launcher
-                }.lparams(width = wrapContent, height = wrapContent){
+                }.lparams(width = wrapContent, height = wrapContent) {
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
-                themedTextView("GitHub", R.style.detail_title){
+                themedTextView("GitHub", R.style.detail_title) {
                     textColor = R.color.colorPrimary
-                }.lparams(width = wrapContent, height = wrapContent){
+                }.lparams(width = wrapContent, height = wrapContent) {
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
-                themedTextView("By Bennyhuo", R.style.detail_description){
+                themedTextView("MaxzMeng", R.style.detail_description) {
                     textColor = R.color.colorPrimary
-                }.lparams(width = wrapContent, height = wrapContent){
+                }.lparams(width = wrapContent, height = wrapContent) {
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
-                themedTextView(R.string.open_source_licenses, R.style.detail_description){
+                themedTextView(R.string.open_source_licenses, R.style.detail_description) {
                     textColor = R.color.colorPrimary
 
                     onClick {
@@ -57,10 +55,10 @@ class AboutFragmentUI: AnkoComponent<AboutFragment> {
                             }
                         }.show()
                     }
-                }.lparams(width = wrapContent, height = wrapContent){
+                }.lparams(width = wrapContent, height = wrapContent) {
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
-            }.lparams(width = wrapContent, height = wrapContent){
+            }.lparams(width = wrapContent, height = wrapContent) {
                 gravity = Gravity.CENTER
             }
         }
