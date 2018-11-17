@@ -14,6 +14,7 @@ import me.maxandroid.github.common.ext.yes
 import me.maxandroid.github.mvp.impl.BaseActivity
 import me.maxandroid.github.presenter.LoginPresenter
 import me.maxandroid.github.utils.hideSoftInput
+import me.maxandroid.github.view.config.Themer
 import org.jetbrains.anko.sdk15.listeners.onClick
 import org.jetbrains.anko.toast
 
@@ -22,6 +23,7 @@ class LoginActivity : BaseActivity<LoginPresenter>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Themer.applyProperTheme(this)
         setContentView(R.layout.activity_login)
 
         signInButton.onClick {

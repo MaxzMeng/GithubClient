@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import me.maxandroid.github.R
+import me.maxandroid.github.utils.attrStyle
 import me.maxandroid.github.utils.markdownText
 import me.maxandroid.github.view.common.CommonSinglePageFragment
 import org.jetbrains.anko.*
@@ -31,17 +32,16 @@ class AboutFragmentUI : AnkoComponent<AboutFragment> {
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
                 themedTextView("GitHub", R.style.detail_title) {
-                    textColor = R.color.colorPrimary
+
                 }.lparams(width = wrapContent, height = wrapContent) {
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
                 themedTextView("MaxzMeng", R.style.detail_description) {
-                    textColor = R.color.colorPrimary
+
                 }.lparams(width = wrapContent, height = wrapContent) {
                     gravity = Gravity.CENTER_HORIZONTAL
                 }
                 themedTextView(R.string.open_source_licenses, R.style.detail_description) {
-                    textColor = R.color.colorPrimary
 
                     onClick {
                         alert {

@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import com.bennyhuo.tieguanyin.annotations.ActivityBuilder
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
+import android.view.Menu
 import me.maxandroid.github.R
 import me.maxandroid.github.common.ext.no
 import me.maxandroid.github.common.ext.otherwise
@@ -18,8 +16,15 @@ import me.maxandroid.github.network.entities.User
 import me.maxandroid.github.utils.afterClosed
 import me.maxandroid.github.utils.showFragment
 import me.maxandroid.github.view.config.NavViewItem
+import me.maxandroid.github.view.config.Themer
+import me.maxandroid.github.view.config.Themer.ThemeMode.DAY
 import me.maxandroid.github.view.widget.ActionBarController
 import me.maxandroid.github.view.widget.NavigationController
+import com.bennyhuo.tieguanyin.annotations.ActivityBuilder
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.menu_item_daynight.view.*
+import org.jetbrains.anko.sdk15.listeners.onCheckedChange
 import org.jetbrains.anko.toast
 
 @ActivityBuilder(flags = [Intent.FLAG_ACTIVITY_CLEAR_TOP])
@@ -35,6 +40,7 @@ class MainActivity : AppCompatActivity(), OnAccountStateChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Themer.applyProperTheme(this)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -105,5 +111,17 @@ class MainActivity : AppCompatActivity(), OnAccountStateChangeListener {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_actionbar, menu)
+        menu.findItem(R.id.dayNight).actionView.dayNightSwitch.apply {
+            isChecked = Themer.currentTheme() == Themer.ThemeMode.DAY
+
+            onCheckedChange { buttonView, isChecked ->
+                Themer.toggle(this@MainActivity)
+            }
+        }
+        return true
     }
 }

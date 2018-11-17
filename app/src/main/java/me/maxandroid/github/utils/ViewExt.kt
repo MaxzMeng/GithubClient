@@ -3,6 +3,7 @@ package me.maxandroid.github.utils
 import android.content.Context
 import android.view.ViewManager
 import android.widget.TextView
+import cn.carbs.android.avatarimageview.library.AppCompatAvatarImageView
 import cn.carbs.android.avatarimageview.library.AvatarImageView
 import com.zzhoujay.richtext.RichText
 import org.jetbrains.anko.AnkoViewDslMarker
@@ -20,7 +21,7 @@ var TextView.htmlText: String
     }
     get() = text.toString()
 
-inline fun ViewManager.avatarImageView(): AvatarImageView = avatarImageView() {}
-inline fun ViewManager.avatarImageView(init: (@AnkoViewDslMarker AvatarImageView).() -> Unit): AvatarImageView {
-    return ankoView({ ctx: Context -> AvatarImageView(ctx) }, theme = 0) { init() }
+inline fun ViewManager.avatarImageView(): AppCompatAvatarImageView = avatarImageView() {}
+inline fun ViewManager.avatarImageView(init: (@AnkoViewDslMarker AppCompatAvatarImageView).() -> Unit): AppCompatAvatarImageView {
+    return ankoView({ ctx: Context -> AppCompatAvatarImageView(ctx) }, theme = 0) { init() }
 }

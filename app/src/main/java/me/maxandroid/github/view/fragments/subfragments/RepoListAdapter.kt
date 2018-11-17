@@ -8,6 +8,7 @@ import me.maxandroid.github.network.entities.Repository
 import me.maxandroid.github.utils.loadWithGlide
 import me.maxandroid.github.utils.toKilo
 import me.maxandroid.github.view.common.CommonListAdapter
+import me.maxandroid.github.view.startRepoDetailActivity
 
 class RepoListAdapter : CommonListAdapter<Repository>(R.layout.item_repo) {
     override fun onBindData(viewHolder: ViewHolder, repository: Repository) {
@@ -22,7 +23,7 @@ class RepoListAdapter : CommonListAdapter<Repository>(R.layout.item_repo) {
     }
 
     override fun onItemClicked(itemView: View, item: Repository) {
-        //todo
+        itemView.startRepoDetailActivity(item)
     }
 
 }

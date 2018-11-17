@@ -21,4 +21,6 @@ object Settings {
     private var defaultPageForVisitor by pref(R.id.navRepos)
 
     private var lastPageIdString by pref("")
+
+    var themeMode by pref("DAY")
 }
