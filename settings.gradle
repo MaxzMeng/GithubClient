@@ -1,1 +1,1 @@
-include ':app', ':common', ':mvp'
+include ':app', ':common', ':mvp', ':retroapolloandroid'

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.apollographql.android'
 apply plugin: 'kotlin-kapt'
 apply from:"./local.gradle"
 apply plugin: 'kotlin-noarg'
@@ -101,7 +102,13 @@ dependencies {
     api 'com.github.jdsjlzx:LRecyclerView:1.5.0'
 
     api 'com.android.support:multidex:1.0.1'
+
+    api "com.apollographql.apollo:apollo-rx-support:$apollo_version"
+    api "com.apollographql.apollo:apollo-runtime:$apollo_version"
     api "com.bennyhuo.kotlin:opd:1.0-rc-2"
+
+    //https://github.com/enbandari/RetroApollo-Android
+    api "com.bennyhuo.retroapollo:retroapollo:0.4.2-beta"
     implementation project(":common")
     implementation project(":mvp")
 }

@@ -1,6 +1,6 @@
 package me.maxandroid.github.network.interceptors
 
-import me.maxandroid.github.network.Network
+import me.maxandroid.github.utils.Network
 import me.maxandroid.github.common.ext.no
 import me.maxandroid.github.common.ext.otherwise
 import me.maxandroid.github.common.ext.yes

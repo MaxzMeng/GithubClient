@@ -1,4 +1,4 @@
-package me.maxandroid.github.network
+package me.maxandroid.github.utils
 
 import me.maxandroid.github.AppContext
 import org.jetbrains.anko.connectivityManager

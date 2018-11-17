@@ -1,25 +1,22 @@
 package me.maxandroid.github.view
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.view.MenuItem
-import me.maxandroid.github.R
-import me.maxandroid.github.network.entities.Repository
-import me.maxandroid.github.network.services.ActivityService
-import me.maxandroid.github.network.services.RepositoryService
-import me.maxandroid.github.utils.*
 import com.bennyhuo.tieguanyin.annotations.ActivityBuilder
 import com.bennyhuo.tieguanyin.annotations.Required
 import kotlinx.android.synthetic.main.activity_repo_details.*
 import kotlinx.android.synthetic.main.app_bar_details.*
-import me.maxandroid.github.view.common.BaseDetailActivity
+import me.maxandroid.github.R
+import me.maxandroid.github.network.GraphQLService
+import me.maxandroid.github.network.entities.Repository
+import me.maxandroid.github.network.services.ActivityService
+import me.maxandroid.github.network.services.RepositoryService
+import me.maxandroid.github.utils.*
 import me.maxandroid.github.view.common.BaseDetailSwipeFinishableActivity
-import me.maxandroid.github.view.config.Themer
 import retrofit2.Response
 import rx.Subscriber
 
 @ActivityBuilder
-class RepoDetailActivity: BaseDetailSwipeFinishableActivity() {
+class RepoDetailActivity : BaseDetailSwipeFinishableActivity() {
 
     @Required
     lateinit var repository: Repository
@@ -34,25 +31,27 @@ class RepoDetailActivity: BaseDetailSwipeFinishableActivity() {
         reloadDetails()
     }
 
-    private fun initDetails(){
+    private fun initDetails() {
         avatarView.loadWithGlide(repository.owner.avatar_url, repository.owner.login.first())
         collapsingToolbar.title = repository.name
 
-        descriptionView.markdownText = getString(R.string.repo_description_template,
+        descriptionView.markdownText = getString(
+            R.string.repo_description_template,
             repository.owner.login,
             repository.owner.html_url,
             repository.name,
             repository.html_url,
             repository.owner.login,
             repository.owner.html_url,
-            githubTimeToDate(repository.created_at).view())
+            githubTimeToDate(repository.created_at).view()
+        )
 
         bodyView.text = repository.description
 
         detailContainer.alpha = 0f
 
         stars.checkEvent = { isChecked ->
-            if(isChecked){
+            if (isChecked) {
                 ActivityService.unstar(repository.owner.login, repository.name)
                     .map { false }
             } else {
@@ -62,7 +61,7 @@ class RepoDetailActivity: BaseDetailSwipeFinishableActivity() {
         }
 
         watches.checkEvent = { isChecked ->
-            if(isChecked){
+            if (isChecked) {
                 ActivityService.unwatch(repository.owner.login, repository.name)
                     .map { false }
             } else {
@@ -73,7 +72,7 @@ class RepoDetailActivity: BaseDetailSwipeFinishableActivity() {
 
         ActivityService.isStarred(repository.owner.login, repository.name)
             .onErrorReturn {
-                if(it is retrofit2.HttpException){
+                if (it is retrofit2.HttpException) {
                     it.response() as Response<Any>
                 } else {
                     throw it
@@ -89,9 +88,9 @@ class RepoDetailActivity: BaseDetailSwipeFinishableActivity() {
             }
     }
 
-    private fun reloadDetails(forceNetwork: Boolean = false){
+    private fun reloadDetails(forceNetwork: Boolean = false) {
         RepositoryService.getRepository(repository.owner.login, repository.name, forceNetwork)
-            .subscribe(object: Subscriber<Repository>(){
+            .subscribe(object : Subscriber<Repository>() {
                 override fun onStart() {
                     super.onStart()
                     loadingView.animate().alpha(1f).start()
@@ -104,7 +103,7 @@ class RepoDetailActivity: BaseDetailSwipeFinishableActivity() {
                     stars.content = repository.stargazers_count.toString()
                     watches.content = repository.subscribers_count.toString()
                     forks.content = repository.forks_count.toString()
-                    issues.content = repository.open_issues_count.toString()
+//                    issues.content = repository.open_issues_count.toString()
 
                     loadingView.animate().alpha(0f).start()
                     detailContainer.animate().alpha(1f).start()
@@ -118,6 +117,27 @@ class RepoDetailActivity: BaseDetailSwipeFinishableActivity() {
                 }
 
             })
+
+        GraphQLService.repositoryIssueCount(repository.owner.login, repository.name)
+            .subscribeIgnoreError {
+                    data ->
+                issues.content = "open: ${data.repository()?.openIssues()?.totalCount()?: 0} closed: ${data.repository()?.closedIssues()?.totalCount()?: 0}"
+            }
+//        apolloClient.query(RepositoryIssueCountQuery(repository.name, repository.owner.login))
+//            .enqueue(object : ApolloCall.Callback<RepositoryIssueCountQuery.Data>() {
+//                override fun onResponse(response: com.apollographql.apollo.api.Response<RepositoryIssueCountQuery.Data>) {
+//                    runOnUiThread {
+//                        response.data()?.let {
+//                            issues.content = "open: ${it.repository()?.openIssues()?.totalCount() ?: 0} closed: ${it.repository()?.closedIssues()?.totalCount() ?: 0}"
+//                        }
+//                    }
+//                }
+//
+//                override fun onFailure(e: ApolloException) {
+//                    e.printStackTrace()
+//                }
+//
+//            })
     }
 
 }

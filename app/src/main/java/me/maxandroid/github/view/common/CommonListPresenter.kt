@@ -4,13 +4,13 @@ import me.maxandroid.github.model.page.ListPage
 import me.maxandroid.github.mvp.impl.BasePresenter
 import rx.Subscription
 
-abstract class CommonListPresenter<DataType, out View : CommonListFragment<DataType, CommonListPresenter<DataType, View>>> :
-    BasePresenter<View>() {
+
+abstract class CommonListPresenter<DataType, out View : CommonListFragment<DataType, CommonListPresenter<DataType, View>>> : BasePresenter<View>() {
 
     abstract val listPage: ListPage<DataType>
 
     private var firstInView = true
-    private val subcriptionList = ArrayList<Subscription>()
+    private val subscriptionList = ArrayList<Subscription>()
 
     fun initData() {
         listPage.loadFromFirst()
@@ -18,15 +18,15 @@ abstract class CommonListPresenter<DataType, out View : CommonListFragment<DataT
                 if (it.isEmpty()) view.onDataInitWithNothing() else view.onDataInit(it)
             }, {
                 view.onDataInitWithError(it.message ?: it.toString())
-            }).let(subcriptionList::add)
+            }).let(subscriptionList::add)
     }
 
     fun refreshData() {
         listPage.loadFromFirst()
             .subscribe(
                 { if (it.isEmpty()) view.onDataInitWithNothing() else view.onDataRefresh(it) },
-                { view.onDataRefreshWithError(it.message ?: it.toString()) }
-            ).let(subcriptionList::add)
+                { view.onDataRefreshWithError(it.message ?: it.toString())}
+            ).let(subscriptionList::add)
     }
 
     fun loadMore() {
@@ -34,7 +34,7 @@ abstract class CommonListPresenter<DataType, out View : CommonListFragment<DataT
             .subscribe(
                 { view.onMoreDataLoaded(it) },
                 { view.onMoreDataLoadedWithError(it.message ?: it.toString()) }
-            ).let(subcriptionList::add)
+            ).let(subscriptionList::add)
     }
 
     override fun onResume() {
@@ -47,7 +47,7 @@ abstract class CommonListPresenter<DataType, out View : CommonListFragment<DataT
 
     override fun onDestroy() {
         super.onDestroy()
-        subcriptionList.forEach(Subscription::unsubscribe)
-        subcriptionList.clear()
+        subscriptionList.forEach(Subscription::unsubscribe)
+        subscriptionList.clear()
     }
 }

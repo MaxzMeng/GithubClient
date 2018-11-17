@@ -3,6 +3,7 @@
 buildscript {
     ext.kotlin_version = '1.2.71'
     ext.anko_version = '0.10.4'
+    ext.apollo_version = "0.5.0"
     repositories {
         maven{
             url "http://maven.aliyun.com/nexus/content/groups/public"
@@ -14,6 +15,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+        classpath "com.apollographql.apollo:apollo-gradle-plugin:$apollo_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -26,6 +28,7 @@ allprojects {
         }
         google()
         jcenter()
+        mavenLocal()
         maven { url 'https://jitpack.io' }
     }
 }
